@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "pulse-engine-backend"
+version = "0.1.0"
+description = ""
+authors = ["Rafal Skrzydelski <rafal.skrzydelski@ext.saint-gobain.com>"]
+readme = "README.md"
+packages = [{include = "pulse_engine_backend"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

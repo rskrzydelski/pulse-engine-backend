@@ -1,3 +1,141 @@
+[tool.pycln]
+all = true
+
+[tool.isort]
+profile = "black"
+line_length = 110
+multi_line_output = 3
+order_by_type = false
+lines_after_imports = 2
+include_trailing_comma = true
+use_parentheses = true
+sections = [
+    'FUTURE',
+    'STDLIB',
+    'THIRDPARTY',
+    'FIRSTPARTY',
+    'LOCALFOLDER'
+]
+
+[tool.black]
+line-length = 110
+target-version = ['py311']
+include = '\.pyi?$'
+force-exclude  = '''
+/(
+    \.DS_Store |
+    \.githooks |
+    \.html$ |
+    \.idea |
+    \.json$ |
+    \.poetry |
+    \.pyc$ |
+    \.sql$ |
+    \.vscode |
+    \.venv |
+    node_modules |
+    migrations |
+    tests
+)/
+'''
+
+[tool.mypy]
+plugins = ["pydantic.mypy"]  # add "tinydb.mypy_plugin" when aiotinydb release version 2.0 (needs tinydb > 4.0)
+python_version = 3.11
+exclude = [
+    ".venv",
+    'cmd',
+    'migrations',
+    'tests'
+]
+check_untyped_defs = true
+allow_redefinition = false
+disallow_any_generics = true
+disallow_any_explicit = false
+disallow_untyped_calls = true
+allow_untyped_decorators = true
+ignore_errors = false
+ignore_missing_imports = true
+implicit_reexport = false
+no_implicit_optional = true
+strict_optional = true
+strict_equality = true
+local_partial_types = true
+warn_no_return = true
+warn_unreachable = true
+warn_unused_ignores = true
+warn_unused_configs = true
+warn_redundant_casts = true
+[[tool.mypy.overrides]]
+module = [
+  ".venv",
+  "pulse_engine_backend.tests.*"
+]
+ignore_errors = true
+
+[tool.bandit]
+exclude_dirs = [".venv", "tests"]
+
+[tool.coverage.run]
+omit = [".venv/*", "tests/*"]
+
+[tool.coverage.report]
+fail_under = 77
+exclude_lines = [
+    'pragma: no cover',
+    'def __repr__',
+    'if self\\.debug',
+    'raise AssertionError',
+    'raise NotImplementedError',
+    'if 0:',
+    'if __name__ == .__main__.:',
+    '@(abc\\.)?abstractmethod',
+]
+
+ignore_errors = true
+
+[tool.coverage.html]
+directory = 'coverage_html_report'
+
+[tool.flake8]
+exclude = '.git,__pycache__,docs/source/conf.py,old,build,dist,.venv/*.py,.tox,.idea,.vscode,.mypy_cache,migrations/models,pulse_engine_backend/tests/*.py'
+max-line-length = 110
+max-complexity = 18
+show-source = true
+max-arguments = 10
+min-name-length = 1
+max-expressions = 15
+max-string-usages = 10
+max-line-complexity = 20
+doctests = true
+statistics = false
+inline-quotes = 'double'
+i-control-code = false
+ignore = [
+    'F541', # f-string can be preemplivy added
+]
+per-file-ignores = [
+    # ignore docstring in test | ignore pd.values | ignore import not used like fixtures | ignore pytest fixtures
+    '*/tests.py: D, PD011, F401, F811',
+    '*/test_*.py: D, PD011, F401, F811',
+    '*/tests_*.py: D, PD011, F401, F811',
+    '*/conftest.py: D, PD011, F401, F811',
+    '*/tests/*: D, PD011, F401, F811',
+    # ignore import not used in __init__.py and unable to detect
+    "*/__init__.py: F401, F403",
+    "*/tests/__init__.py: D, PD011, F401, F811, F403",
+    "*/tests/*/__init__.py: D, PD011, F401, F811, F403",
+    # ignoring too long line and missing docstrings in migrate files
+    "*/migrations/*: E501, D100, D103",
+]
+classmethod-decorators = ['classmethod', 'validator']
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-p no:warnings --ignore=.venv --asyncio-mode=auto --cov-report=term-missing --cov=pulse_engine_backend/app"
+python_files = "tests.py test_*.py *_tests.py"
+python_functions = "test_*"
+
 [tool.poetry]
 name = "pulse-engine-backend"
 version = "0.1.0"
@@ -8,7 +146,31 @@ packages = [{include = "pulse_engine_backend"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
+uvloop = "^0.17.0"
+python-multipart = "^0.0.5"
+httpx = "^0.25.0"
+loguru = "^0.7.0"
+uvicorn = "^0.20.0"
+fastapi = "^0.101.1"
+pydantic = "^1.10.2"
+fastapi-cache = "^0.1.0"
+fastapi-cache2 = "^0.2.1"
+fastapi-utils = "^0.2.1"
 
+
+[tool.poetry.group.dev.dependencies]
+coverage = {extras = ["toml"], version = "^7.2.2"}
+flake8 = {extras = ["flake8-blind-except", "flake8-print"], version = "^6.0.0"}
+pre-commit = "^3.5.0"
+mypy = "^1.6.1"
+isort = "^5.12.0"
+pytest = "^7.4.2"
+pytest-asyncio = "^0.21.1"
+vulture = "^2.10"
+bandit = "^1.7.5"
+black = "^23.10.0"
+pytest-cov = "^4.1.0"
+pycln = "^2.3.0"
 
 [build-system]
 requires = ["poetry-core"]

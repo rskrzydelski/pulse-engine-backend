@@ -1,7 +1,13 @@
 """Basic metrics router."""
-from fastapi import APIRouter, status
+from fastapi import APIRouter
+import redis
+
+from pulse_engine_backend.app.utils.constans import supported_coins
 
 router = APIRouter()
+
+rd = redis.Redis(host="localhost", port=6379, db=0)
+
 
 @router.get("")
 async def get_basic_metrics():
@@ -13,22 +19,10 @@ async def get_basic_metrics():
     Raises:
         HTTPException - if ValidationError
     """
-    data = _get_basic_metrics()
+    data = {}
+    for symbol, _ in supported_coins:
+        cache = rd.get(symbol)
+        if cache is None:
+            continue
+        data[symbol] = cache
     return data
-
-def _get_basic_metrics():
-    return {
-        "prices": {
-            "dai": 1.0,
-            "usdc": 1.0,
-            "usdt": 1.0,
-            "eth": 1700.2,
-            "plsx": 0.0004,
-            "pls": 0.00004,
-            "hex": 0.03,
-            "hex-pls": 0.004,
-        },
-        "network": {
-            "block_number": 184759,
-        }
-    }

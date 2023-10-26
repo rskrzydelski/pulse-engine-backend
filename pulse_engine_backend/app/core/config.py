@@ -14,8 +14,8 @@ class Settings(BaseSettings):
     API_STR: str
 
     # UVICORN
-    # UVICORN_PORT_MAIN: int
-    # UVICORN_ADDRESS_MAIN: str
+    UVICORN_PORT_MAIN: int
+    UVICORN_ADDRESS_MAIN: str
 
     class Config:
         """Config class."""
